@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <meta name="theme-color" content="#e9edf2"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
@@ -17,7 +17,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Oswald:wght@500;600&family=Nunito:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0; height:100%; overflow:hidden;}
+  html,body{margin:0; height:100%; overflow:hidden;
+    touch-action:manipulation;              /* kills the double-tap-to-zoom gesture */
+    -webkit-text-size-adjust:100%; text-size-adjust:100%;}
   .hide{display:none !important;}
   /* the board steps back rather than vanishing when a panel opens */
   /* The balls carry their own z-index; without a stacking context of its own the board
@@ -1547,6 +1549,12 @@ body[data-theme="iron"] .hide{display:none !important;}</style>
   window.addEventListener('resize',onResize);
   window.addEventListener('orientationchange',onResize);
   if(window.visualViewport) window.visualViewport.addEventListener('resize',onResize);
+
+  // Safari ignores user-scalable=no, so the pinch gestures are cancelled directly.
+  ['gesturestart','gesturechange','gestureend'].forEach(ev=>{
+    try{ document.addEventListener(ev, e=>e.preventDefault(), {passive:false}); }catch(e){}
+  });
+  try{ document.addEventListener('dblclick', e=>e.preventDefault(), {passive:false}); }catch(e){}
 
   buildTabs();
   buildRecTabs();
